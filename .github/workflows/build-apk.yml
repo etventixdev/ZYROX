@@ -3,6 +3,8 @@ name: Build ZYROX APK
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -25,11 +27,44 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Install dependencies
+      - name: Install API dependencies
+        run: npm ci --prefix server
+
+      - name: Test authentication API
+        run: npm test --prefix server
+
+      - name: Install Capacitor dependencies
         run: npm ci
+
+      - name: Configure public API URL
+        env:
+          ZYROX_API_URL: ${{ vars.ZYROX_API_URL }}
+          GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const config = {
+            apiBaseUrl: process.env.ZYROX_API_URL || '',
+            googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID || ''
+          };
+          fs.writeFileSync('www/config.js', 'window.ZYROX_CONFIG = ' + JSON.stringify(config) + ';\n');
+          NODE
+
+      - name: Bundle Google sign-in
+        run: npm run build:web
 
       - name: Sync Android
         run: npx cap sync android
+
+      - name: Install stable debug signing key (optional)
+        env:
+          ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ANDROID_DEBUG_KEYSTORE_BASE64" ]; then
+            mkdir -p "$HOME/.android"
+            printf '%s' "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 --decode > "$HOME/.android/debug.keystore"
+            chmod 600 "$HOME/.android/debug.keystore"
+          fi
 
       - name: Build APK
         working-directory: android

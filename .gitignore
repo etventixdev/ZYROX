@@ -5,3 +5,5 @@ android/**/build/
 .env
 *.jks
 *.keystore
+www/google-auth.bundle.js
+zyrox-debug-keystore.b64

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:web": "esbuild src/google-auth.js --bundle --platform=browser --format=iife --global-name=ZYROXGoogleAuth --target=es2020 --outfile=www/google-auth.bundle.js"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +13,8 @@
   "type": "commonjs",
   "dependencies": {
     "@capacitor/android": "^8.6.0",
-    "@capacitor/core": "^8.6.0"
+    "@capacitor/core": "^8.6.0",
+    "@capgo/capacitor-social-login": "^8.7.5"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
   },
   "homepage": "https://github.com/etventixdev/ZYROX#readme",
   "devDependencies": {
-    "@capacitor/cli": "^8.6.0"
+    "@capacitor/cli": "^8.6.0",
+    "esbuild": "^0.28.2"
   }
 }

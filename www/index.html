@@ -1,19 +1,146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
-  <title>ZYROX</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b14">
+  <meta name="color-scheme" content="dark">
+  <title>ZYROX — Player Access</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <h1>ZYROX</h1>
-    <p>Your Android application is ready.</p>
-    <button onclick="showMessage()">Test Application</button>
-    <p id="message"></p>
+  <div class="ambient ambient-cyan" aria-hidden="true"></div>
+  <div class="ambient ambient-violet" aria-hidden="true"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="ZYROX home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>ZYRO<span class="brand-x">X</span></span>
+      </a>
+      <div class="topbar-note"><span class="status-dot"></span><span>PLAYER ACCESS</span></div>
+    </header>
+
+    <div id="config-notice" class="notice notice-info" role="status" hidden>
+      <span class="notice-icon" aria-hidden="true">i</span>
+      <span>Account services need an API URL. Set <code>ZYROX_API_URL</code> in GitHub Actions variables, or configure <code>www/config.js</code> for local builds.</span>
+    </div>
+
+    <section id="auth-screen" class="screen auth-screen" aria-labelledby="auth-heading">
+      <div class="auth-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> ENTER THE ARENA</div>
+        <h1 id="auth-heading">Your next<br><span>level starts here.</span></h1>
+        <p class="hero-description">Sign in to your ZYROX account and get back to what you came for.</p>
+        <div class="feature-row" aria-label="Account features">
+          <span><i class="feature-check">✓</i> Your profile</span>
+          <span><i class="feature-check">✓</i> Secure sessions</span>
+        </div>
+      </div>
+
+      <div class="auth-card">
+        <div class="card-topline"><span class="card-kicker">ZYROX ID</span><span class="card-index">01 / 03</span></div>
+        <div id="auth-forms">
+          <div id="google-entry" class="google-entry">
+            <button id="google-login-button" class="google-button" type="button" disabled><i class="google-mark" aria-hidden="true">G</i><span>Continue with Google</span></button>
+            <p id="google-help" class="google-help">Google sign-in needs OAuth setup.</p>
+            <p id="google-error" class="field-error" aria-live="polite"></p>
+            <div class="oauth-divider"><span>OR CONTINUE WITH EMAIL</span></div>
+          </div>
+          <div id="login-panel" class="form-panel">
+            <h2>Welcome back</h2>
+            <p class="form-subtitle">Enter your details to continue.</p>
+            <form id="login-form" novalidate>
+              <label class="field-label" for="login-email">Email address</label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254"></div>
+              <div class="field-heading"><label class="field-label" for="login-password">Password</label><button class="text-button" type="button" data-open="forgot">Forgot password?</button></div>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required maxlength="128"><button class="password-toggle" type="button" data-toggle-password="login-password" aria-label="Show password">SHOW</button></div>
+              <p class="field-error" id="login-error" aria-live="polite"></p>
+              <button class="primary-button" type="submit"><span>Sign in</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            </form>
+            <p class="form-switch">New to ZYROX? <button class="text-button" type="button" data-open="register">Create account</button></p>
+          </div>
+
+          <div id="register-panel" class="form-panel" hidden>
+            <h2>Create your ID</h2>
+            <p class="form-subtitle">One account. Your next run starts now.</p>
+            <form id="register-form" novalidate>
+              <label class="field-label" for="register-username">Username</label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">@</span><input id="register-username" name="username" type="text" autocomplete="username" placeholder="NeonRider" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+"></div>
+              <label class="field-label" for="register-email">Email address</label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254"></div>
+              <label class="field-label" for="register-password">Password <span class="label-hint">12 characters minimum</span></label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Create a strong password" required minlength="12" maxlength="128"><button class="password-toggle" type="button" data-toggle-password="register-password" aria-label="Show password">SHOW</button></div>
+              <label class="field-label" for="register-confirm">Confirm password</label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="register-confirm" name="confirm" type="password" autocomplete="new-password" placeholder="Enter it once more" required minlength="12" maxlength="128"><button class="password-toggle" type="button" data-toggle-password="register-confirm" aria-label="Show password">SHOW</button></div>
+              <p class="field-error" id="register-error" aria-live="polite"></p>
+              <button class="primary-button" type="submit"><span>Create account</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            </form>
+            <p class="form-switch">Already have an account? <button class="text-button" type="button" data-open="login">Sign in</button></p>
+          </div>
+
+          <div id="forgot-panel" class="form-panel" hidden>
+            <button class="back-link" type="button" data-open="login"><span aria-hidden="true">←</span> Back to sign in</button>
+            <h2>Reset your password</h2>
+            <p class="form-subtitle">We’ll email you a one-time code to get back in.</p>
+            <form id="forgot-form" novalidate>
+              <label class="field-label" for="forgot-email">Email address</label>
+              <div class="input-wrap"><span class="input-icon" aria-hidden="true">✉</span><input id="forgot-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254"></div>
+              <p class="field-error" id="forgot-error" aria-live="polite"></p>
+              <button class="primary-button" type="submit"><span>Send reset code</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            </form>
+            <div id="reset-step" class="reset-step" hidden>
+              <div class="reset-divider"><span>ENTER YOUR CODE</span></div>
+              <p class="inline-note">If the address is registered, an 8-digit code is on its way. It expires in 10 minutes.</p>
+              <form id="reset-form" novalidate>
+                <label class="field-label" for="reset-code">Reset code</label>
+                <div class="input-wrap"><span class="input-icon" aria-hidden="true">#</span><input id="reset-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="00000000" required minlength="8" maxlength="8" pattern="[0-9]{8}"></div>
+                <label class="field-label" for="reset-password">New password <span class="label-hint">12 characters minimum</span></label>
+                <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="reset-password" name="password" type="password" autocomplete="new-password" placeholder="Create a new password" required minlength="12" maxlength="128"><button class="password-toggle" type="button" data-toggle-password="reset-password" aria-label="Show password">SHOW</button></div>
+                <p class="field-error" id="reset-error" aria-live="polite"></p>
+                <button class="primary-button" type="submit"><span>Update password</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer"><span class="lock-icon" aria-hidden="true">▣</span> Protected sign-in <span class="footer-separator">·</span> Your credentials stay private</div>
+      </div>
+    </section>
+
+    <section id="dashboard-screen" class="screen dashboard-screen" hidden aria-labelledby="dashboard-title">
+      <div class="dashboard-heading">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> PLAYER PROFILE</div><h1 id="dashboard-title">Good to have you back.</h1><p class="hero-description">Your ZYROX account is ready.</p></div>
+        <button id="logout-button" class="outline-button" type="button"><span aria-hidden="true">↗</span> Sign out</button>
+      </div>
+      <article class="profile-card">
+        <div class="profile-glow" aria-hidden="true"></div>
+        <div id="avatar" class="avatar" aria-hidden="true">Z</div>
+        <div class="profile-copy"><span class="card-kicker">PLAYER ACCOUNT</span><h2 id="dashboard-username">Player</h2><p id="dashboard-email">player@example.com</p></div>
+        <div class="profile-badge"><span class="status-dot"></span> ACTIVE SESSION</div>
+      </article>
+      <section class="settings-card" aria-labelledby="settings-heading">
+        <div class="settings-heading"><div><span class="card-kicker">ACCOUNT</span><h2 id="settings-heading">Account settings</h2></div><span class="settings-icon" aria-hidden="true">⚙</span></div>
+        <div class="settings-row"><span>Username</span><strong id="settings-username">—</strong></div>
+        <div class="settings-row"><span>Email address</span><strong id="settings-email">—</strong></div>
+        <div class="settings-row"><span>Session</span><strong class="secure-label"><span class="status-dot"></span> Secure &amp; persistent</strong></div>
+        <details class="password-settings">
+          <summary>Change password <span aria-hidden="true">＋</span></summary>
+          <form id="change-password-form" novalidate>
+            <label class="field-label" for="current-password">Current password</label>
+            <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required maxlength="128"><button class="password-toggle" type="button" data-toggle-password="current-password" aria-label="Show password">SHOW</button></div>
+            <label class="field-label" for="new-password">New password <span class="label-hint">12 characters minimum</span></label>
+            <div class="input-wrap"><span class="input-icon" aria-hidden="true">⌑</span><input id="new-password" name="newPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128"><button class="password-toggle" type="button" data-toggle-password="new-password" aria-label="Show password">SHOW</button></div>
+            <p class="field-error" id="change-password-error" aria-live="polite"></p>
+            <button class="secondary-button" type="submit">Update password</button>
+          </form>
+        </details>
+      </section>
+      <p class="dashboard-footnote"><span class="status-dot"></span> Your session is protected and will stay active on this device.</p>
+    </section>
+
+    <footer class="page-footer"><span>© ZYROX</span><span>PLAY YOUR WAY</span><span class="footer-right">SECURE PLAYER PORTAL <i></i></span></footer>
   </main>
-  <script src="script.js"></script>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="google-auth.bundle.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
