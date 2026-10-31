@@ -21,7 +21,7 @@ function validPassword(value) {
   return typeof value === "string" && value.length >= 12 && value.length <= 128;
 }
 function publicUser(row) {
-  return { id: row.id, username: row.username, email: row.email };
+  return { id: row.id, username: row.username, email: row.email, role: row.role || "player" };
 }
 function cookieValue(req, key) {
   const header = req.headers.cookie || "";
@@ -91,7 +91,7 @@ function createApp({ pool, jwtSecret, allowedOrigins = [], mailer = null, secure
     if (!claims) return res.status(401).json({ error: "Your session expired. Sign in again." });
     try {
       const result = await pool.query(
-        "SELECT u.id, u.username, u.email FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.id = $1 AND s.user_id = $2 AND s.revoked_at IS NULL AND s.expires_at > NOW()",
+        "SELECT u.id, u.username, u.email, u.role FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.id = $1 AND s.user_id = $2 AND s.revoked_at IS NULL AND s.expires_at > NOW()",
         [claims.sid, claims.sub]
       );
       if (!result.rows[0]) return res.status(401).json({ error: "Your session expired. Sign in again." });
@@ -102,6 +102,29 @@ function createApp({ pool, jwtSecret, allowedOrigins = [], mailer = null, secure
       next(error);
     }
   }
+
+
+  async function requireAdmin(req, res, next) {
+    if (!req.user || req.user.role !== "admin") {
+      return res.status(403).json({ error: "Administrator access required." });
+    }
+    next();
+  }
+
+  app.get("/api/admin/me", requireAuth, requireAdmin, (req, res) => {
+    res.json({ admin: publicUser(req.user) });
+  });
+
+  app.get("/api/admin/users", requireAuth, requireAdmin, async (req, res, next) => {
+    try {
+      const result = await pool.query(
+        "SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC LIMIT 100"
+      );
+      res.json({ users: result.rows });
+    } catch (error) {
+      next(error);
+    }
+  });
 
   app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
