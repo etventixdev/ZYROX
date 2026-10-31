@@ -2,9 +2,9 @@ name: Build ZYROX APK
 
 on:
   push:
-    branches: [main]
+    branches: [main, zyrox-admin]
   pull_request:
-    branches: [main]
+    branches: [main, zyrox-admin]
   workflow_dispatch:
 
 jobs:
